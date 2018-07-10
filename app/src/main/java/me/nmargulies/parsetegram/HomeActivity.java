@@ -9,6 +9,9 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +27,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import me.nmargulies.parsetegram.model.Post;
@@ -32,6 +36,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private Button refreshButton;
     private Button logoutButton;
+    RecyclerView rvPosts;
+    PostAdapter postAdapter;
+    ArrayList<Post> posts;
 
     // how to launch the camera
     public final String APP_TAG = "MyCustomApp";
@@ -44,12 +51,23 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //getSupportActionBar().setLogo(R.mipmap.ic_launcher_twitter_round);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        // Set ToolBar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        // if you want shadow
+        getSupportActionBar().setElevation(
+                getResources().getDimensionPixelSize(R.dimen.action_bar_elevation)
+        );
+
+        rvPosts = findViewById(R.id.rvPosts);
         ParseUser currentUser = ParseUser.getCurrentUser();
+        posts = new ArrayList<>();
+        postAdapter = new PostAdapter(posts);
+        rvPosts.setLayoutManager(new LinearLayoutManager(this));
+        rvPosts.setAdapter(postAdapter);
+
+
         if (currentUser != null) {
             refreshButton = findViewById(R.id.refresh_btn);
             logoutButton = findViewById(R.id.logoutbtn);
@@ -70,8 +88,10 @@ public class HomeActivity extends AppCompatActivity {
                 }
             });
 
+            loadTopPosts();
+
         } else {
-            // return to the signin activity
+            // return to the Sign-In activity
             final Intent intent = new Intent(HomeActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -87,6 +107,9 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void done(List<Post> objects, ParseException e) {
                 if (e == null) {
+                    posts.addAll(objects);
+                    postAdapter.notifyDataSetChanged();
+
                     for (int i = 0; i < objects.size(); i++) {
                         Log.d("HomeActivity", "Post[" + i + "] = "
                                 + objects.get(i).getDescription()
