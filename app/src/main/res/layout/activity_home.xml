@@ -6,33 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <EditText
-        android:id="@+id/description_et"
-        android:layout_width="275dp"
-        android:layout_height="130dp"
-        android:text="Enter a Description"
-        tools:layout_editor_absoluteX="53dp"
-        tools:layout_editor_absoluteY="99dp" />
-
-    <Button
-        android:id="@+id/create_btn"
-        android:layout_width="276dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="52dp"
-        android:text="Create"
-        app:layout_constraintBottom_toTopOf="@+id/refresh_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <Button
         android:id="@+id/refresh_btn"
-        android:layout_width="282dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="148dp"
+        android:layout_width="128dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="208dp"
         android:text="Refresh"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description_et" />
+        tools:layout_editor_absoluteY="457dp" />
 
     <Button
         android:id="@+id/logoutbtn"
@@ -41,14 +22,14 @@
         android:layout_marginStart="292dp"
         android:layout_marginTop="80dp"
         android:text="LogOut"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/refresh_btn" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/cameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Camera"
+        android:onClick="onLaunchCamera"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="457dp" />
 
