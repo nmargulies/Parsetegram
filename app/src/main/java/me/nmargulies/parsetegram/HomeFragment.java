@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,7 @@ public class HomeFragment extends Fragment {
     FragmentActivity listener;
     ArrayList<Post> posts;
     private SwipeRefreshLayout swipeContainer;
+
 
     @Override
     public void onAttach(Context context) {
@@ -57,7 +57,6 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = view.findViewById(R.id.rvPosts);
-        ParseUser currentUser = ParseUser.getCurrentUser();
         posts = new ArrayList<>();
         postAdapter = new PostAdapter(getActivity(), posts);
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -67,9 +66,6 @@ public class HomeFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
                 loadTopPosts();
             }
         });
@@ -97,6 +93,7 @@ public class HomeFragment extends Fragment {
                                 + objects.get(i).getDescription()
                                 + "\nusername = " + objects.get(i).getUser().getUsername()
                         );
+                        swipeContainer.setRefreshing(false);
                     }
                 } else {
                     e.printStackTrace();

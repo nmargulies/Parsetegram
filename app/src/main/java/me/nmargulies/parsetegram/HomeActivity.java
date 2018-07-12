@@ -14,16 +14,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.File;
 
-public class HomeActivity extends AppCompatActivity implements CameraFragment.Callback {
+public class HomeActivity extends AppCompatActivity implements CameraFragment.Callback, UserFragment.Callback {
 
     RecyclerView rvPosts;
+    Boolean onProfPicture;
 
     // how to launch the camera
     public final String APP_TAG = "MyCustomApp";
@@ -36,6 +41,7 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
     Fragment fragment_home;
     CameraFragment fragment_camera;
     Fragment fragment_user;
+    ParseUser currentUser;
 
 
     @Override
@@ -49,7 +55,8 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
         setSupportActionBar(toolbar);
         getSupportActionBar().setElevation(getResources().getDimensionPixelSize(R.dimen.action_bar_elevation));
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseUser.getCurrentUser();
+        onProfPicture = false;
 
         // fragments
         final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -89,7 +96,7 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
     }
 
 
-    private void onLaunchCamera() {
+    public void onLaunchCamera() {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference to access to future access
@@ -131,7 +138,38 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                fragment_camera.setSelectedFile(photoFile.getAbsolutePath());
+                if (onProfPicture) {
+                    // TODO - Upload the new avatar
+                    String filepath = photoFile.getAbsolutePath();
+                    final ParseFile newAvatar = new ParseFile(new File(filepath));
+                    newAvatar.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.d("HomeActivity", "Avatar successfully uploaded.");
+
+                                currentUser.put("profilePicture", newAvatar);
+                                currentUser.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Profile Picture Changed!", Toast.LENGTH_SHORT);
+                                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                                            toast.show();
+                                        } else {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+
+                            } else {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    fragment_camera.setSelectedFile(photoFile.getAbsolutePath());
+                }
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
@@ -145,4 +183,11 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_home).commit();
         bottomNavigationView.setSelectedItemId(R.id.action_home);
     }
+
+    @Override
+    public void onchangeProfPicture() {
+        onProfPicture = true;
+        onLaunchCamera();
+    }
+
 }

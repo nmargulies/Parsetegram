@@ -26,7 +26,6 @@ import me.nmargulies.parsetegram.model.Post;
 public class CameraFragment extends Fragment {
 
     EditText descriptionInput;
-    Bitmap takenImage;
     Button postButton;
     ImageView ivPreview;
 
@@ -36,6 +35,7 @@ public class CameraFragment extends Fragment {
     interface Callback {
         void onPostCompleted();
     }
+
     private Callback callback;
 
     @Override
@@ -43,16 +43,8 @@ public class CameraFragment extends Fragment {
         super.onAttach(context);
 
         if (context instanceof Callback) {
-
-            // If it is an instance of our Callback then we want to cast the context to a Callback
-            // and store it as a reference so we can later update the callback when there has been
-            // a text change event.
             callback = (Callback) context;
         } else {
-            // Throwing an error and making your application crash instead of just sweeping it under
-            // the rug is called being an "offensive" programmer.
-            //
-            // The best defense is a strong offense.
             throw new IllegalStateException("Containing context must implement UserInputFragment.Callback.");
         }
     }
