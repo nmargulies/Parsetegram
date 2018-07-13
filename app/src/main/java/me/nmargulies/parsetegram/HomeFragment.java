@@ -17,20 +17,26 @@ import android.view.ViewGroup;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import me.nmargulies.parsetegram.model.Post;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements PostAdapter.PostsListener {
 
     RecyclerView rvPosts;
     PostAdapter postAdapter;
     FragmentActivity listener;
     ArrayList<Post> posts;
     private SwipeRefreshLayout swipeContainer;
+    private HomeFragmentListener listener2;
 
+    public interface HomeFragmentListener {
+        // This can be any number of events to be sent to the activity
+        void switchToUserDetailFragment(ParseUser user);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -38,12 +44,15 @@ public class HomeFragment extends Fragment {
         if (context instanceof Activity) {
             this.listener = (FragmentActivity) context;
         }
+        if (context instanceof HomeFragmentListener) {
+            this.listener2 = (HomeFragmentListener) context;
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        postAdapter = new PostAdapter(getActivity(), posts);
+        postAdapter = new PostAdapter(getActivity(), posts, this);
         loadTopPosts();
     }
 
@@ -58,7 +67,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = view.findViewById(R.id.rvPosts);
         posts = new ArrayList<>();
-        postAdapter = new PostAdapter(getActivity(), posts);
+        postAdapter = new PostAdapter(getActivity(), posts, this);
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPosts.setAdapter(postAdapter);
 
@@ -100,6 +109,12 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onProfileClicked(ParseUser user) {
+        // tell the activity to switch from the Home Fragment to the UserDetailsFragment
+        listener2.switchToUserDetailFragment(user);
     }
 }
 

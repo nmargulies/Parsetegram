@@ -18,8 +18,13 @@ import me.nmargulies.parsetegram.model.Post;
 
 public class MyPostsAdapter extends RecyclerView.Adapter<MyPostsAdapter.ViewHolder> {
 
-    List<Post> myPosts;
-    Context context;
+    private List<Post> myPosts;
+    private Context context;
+
+    public MyPostsAdapter(List<Post> myPosts, Context context) {
+        this.myPosts = myPosts;
+        this.context = context;
+    }
 
     @NonNull
     @Override

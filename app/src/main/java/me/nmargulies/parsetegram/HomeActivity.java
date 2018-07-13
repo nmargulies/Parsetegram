@@ -25,7 +25,7 @@ import com.parse.SaveCallback;
 
 import java.io.File;
 
-public class HomeActivity extends AppCompatActivity implements CameraFragment.Callback, UserFragment.Callback {
+public class HomeActivity extends AppCompatActivity implements CameraFragment.Callback, MyFragment.Callback, HomeFragment.HomeFragmentListener {
 
     RecyclerView rvPosts;
     Boolean onProfPicture;
@@ -40,7 +40,8 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
 
     Fragment fragment_home;
     CameraFragment fragment_camera;
-    Fragment fragment_user;
+    Fragment fragment_userdetails;
+    Fragment fragment_my;
     ParseUser currentUser;
 
 
@@ -62,7 +63,7 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragment_home = new HomeFragment();
         fragment_camera = new CameraFragment();
-        fragment_user = new UserFragment();
+        fragment_my = new MyFragment();
 
         if (currentUser != null) {
             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_home).commit();
@@ -74,13 +75,14 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.action_home:
+                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_home).commit();
                             return true;
                         case R.id.action_camera:
                             onLaunchCamera();
                             fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_camera).commit();
                             return true;
                         case R.id.action_profile:
-                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_user).commit();
+                            fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_my).commit();
                             return true;
                     }
                     return false;
@@ -93,6 +95,12 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
             startActivity(intent);
             finish();
         }
+    }
+
+    public void switchToUserDetailFragment(ParseUser user) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        fragment_userdetails = UserDetailsFragment.getNewInstance(user);
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment_userdetails).commit();
     }
 
 
@@ -156,6 +164,7 @@ public class HomeActivity extends AppCompatActivity implements CameraFragment.Ca
                                             Toast toast = Toast.makeText(getApplicationContext(), "Profile Picture Changed!", Toast.LENGTH_SHORT);
                                             toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                                             toast.show();
+                                            onProfPicture = false;
                                         } else {
                                             e.printStackTrace();
                                         }

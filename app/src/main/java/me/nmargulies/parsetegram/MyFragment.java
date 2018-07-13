@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -24,28 +27,28 @@ import java.util.List;
 
 import me.nmargulies.parsetegram.model.Post;
 
-public class UserFragment extends Fragment {
+public class MyFragment extends Fragment {
 
+    private final ArrayList<Post> myPosts = new ArrayList<>();
     Button logoutButton;
     Button profilePictureButton;
     ImageView ivProfile;
     ParseUser currentUser;
     RecyclerView rvMyPosts;
-    ArrayList<Post> myPosts;
     MyPostsAdapter myPostsAdapter;
 
     interface Callback {
         void onchangeProfPicture();
     }
 
-    private UserFragment.Callback callback;
+    private MyFragment.Callback callback;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof UserFragment.Callback) {
-            callback = (UserFragment.Callback) context;
+        if (context instanceof MyFragment.Callback) {
+            callback = (MyFragment.Callback) context;
         } else {
             throw new IllegalStateException("Containing context must implement UserInputFragment.Callback.");
         }
@@ -60,7 +63,7 @@ public class UserFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        return inflater.inflate(R.layout.fragment_user, parent, false);
+        return inflater.inflate(R.layout.fragment_my, parent, false);
     }
 
     // This event is triggered soon after onCreateView().
@@ -69,14 +72,17 @@ public class UserFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        TextView tvUsername = view.findViewById(R.id.tvUsername);
+        tvUsername.setText(currentUser.getUsername());
+
         populatePosts();
         rvMyPosts = view.findViewById(R.id.rvMyPosts);
-        myPostsAdapter = new MyPostsAdapter();
+        myPostsAdapter = new MyPostsAdapter(myPosts, getContext());
         rvMyPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
         rvMyPosts.setAdapter(myPostsAdapter);
 
         ivProfile = view.findViewById(R.id.ivProfile);
-        Glide.with(this).load(currentUser.getParseFile("profilePicture").getUrl()).into(ivProfile);
+        Glide.with(this).load(currentUser.getParseFile("profilePicture").getUrl()).apply(RequestOptions.bitmapTransform(new RoundedCorners(250))).into(ivProfile);
 
         logoutButton = view.findViewById(R.id.logoutBtn);
         logoutButton.setOnClickListener(new View.OnClickListener() {

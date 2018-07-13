@@ -1,16 +1,14 @@
 package me.nmargulies.parsetegram.model;
 
-import android.text.format.DateUtils;
-
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.Date;
 
 
 @ParseClassName("Post")
@@ -19,7 +17,7 @@ public class Post extends ParseObject{
     private static final String KEY_IMAGE = "image";
     private static final String KEY_USER = "user";
     private static final String KEY_FAVORITE_COUNT = "favorite_count";
-    private static final String KEY_DATE = "created_at";
+    private static final Boolean IS_FAVORITED = false;
 
     private Integer favoriteCount;
 
@@ -53,7 +51,12 @@ public class Post extends ParseObject{
         put(KEY_FAVORITE_COUNT, newFavoriteCount);
     }
 
-    public String getDate() { return getRelativeTimeAgo(KEY_DATE); }
+    public String getDate(ParseObject object) {
+        Date date = object.getCreatedAt();
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String reportDate = df.format(date);
+        return reportDate;
+    }
 
     public static class Query extends ParseQuery<Post>{
         public Query(){
@@ -69,22 +72,5 @@ public class Post extends ParseObject{
             include("user");
             return this;
         }
-    }
-
-    // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
-    public String getRelativeTimeAgo(String rawJsonDate) {
-        String twitterFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-        sf.setLenient(true);
-
-        String relativeDate = "";
-        try {
-            long dateMillis = sf.parse(rawJsonDate).getTime();
-            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return relativeDate;
     }
 }
