@@ -9,13 +9,16 @@
         android:id="@+id/ivProfile"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@android:color/background_dark" />
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:color/background_dark"
+        tools:layout_editor_absoluteY="0dp" />
 
     <TextView
         android:id="@+id/tvUsername"
         android:layout_width="257dp"
         android:layout_height="40dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="72dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

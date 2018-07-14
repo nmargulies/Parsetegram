@@ -29,7 +29,6 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="136dp"
         android:hint="Username"
-        android:text="nmargulies"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +39,6 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="28dp"
         android:hint="Password"
-        android:text="natalie"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameInput" />
 

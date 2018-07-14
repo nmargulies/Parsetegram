@@ -10,7 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -21,11 +26,14 @@ import java.util.List;
 
 import me.nmargulies.parsetegram.model.Post;
 
+import static com.parse.Parse.getApplicationContext;
+
 public class UserDetailsFragment extends Fragment {
 
     private ArrayList<Post> userPosts;
     RecyclerView rvMyPosts;
     MyPostsAdapter myPostsAdapter;
+    ImageView ivProfile;
 
     ParseUser user;
 
@@ -40,9 +48,15 @@ public class UserDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvMyPosts = view.findViewById(R.id.rvUserPosts);
 
+        TextView tvUsername = view.findViewById(R.id.tvUsername);
+        tvUsername.setText(user.getUsername());
+        ivProfile = view.findViewById(R.id.ivProfile);
+        Glide.with(this).load(user.getParseFile("profilePicture").getUrl()).apply(RequestOptions.bitmapTransform(new RoundedCorners(250))).into(ivProfile);
+
+
         userPosts = new ArrayList<>();
         myPostsAdapter = new MyPostsAdapter(userPosts, getContext());
-        rvMyPosts.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        rvMyPosts.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
         rvMyPosts.setAdapter(myPostsAdapter);
 
         findUserPosts(user);

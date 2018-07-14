@@ -9,10 +9,11 @@
         android:id="@+id/etCaption"
         android:layout_width="218dp"
         android:layout_height="53dp"
+        android:layout_marginStart="92dp"
         android:layout_marginTop="56dp"
         android:hint="Enter Caption Here"
-        app:layout_constraintTop_toBottomOf="@+id/ivPreview"
-        tools:layout_editor_absoluteX="95dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPreview" />
 
     <ImageView
         android:id="@+id/ivPreview"
@@ -25,11 +26,13 @@
 
     <Button
         android:id="@+id/postButton"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="148dp"
         android:layout_marginTop="72dp"
-        android:text="Post"
         android:onClick="onPost"
-        app:layout_constraintTop_toTopOf="@+id/etCaption"
-        tools:layout_editor_absoluteX="161dp" />
+        android:text="Post"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etCaption" />
 </android.support.constraint.ConstraintLayout>
